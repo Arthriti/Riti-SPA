@@ -29,7 +29,12 @@ jobs:
         run: npm test
 
       - name: Build production website
-        run: node scripts/build.mjs --url "${{ steps.pages.outputs.base_url }}"
+        env:
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          # Pages may report HTTP while HTTPS provisioning is pending.
+          # Published canonical and asset URLs must always use HTTPS.
+          node scripts/build.mjs --url "${PAGES_BASE_URL/#http:/https:}"
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
