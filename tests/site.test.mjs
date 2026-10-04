@@ -72,3 +72,34 @@ test("given every page, when inspected, then metadata and a single main landmark
     assert.match(content, /<link rel="canonical"/s, page);
   }
 });
+
+test("given the approved voice, when the landing page is inspected, then it avoids em dashes", async () => {
+  const content = await read("index.html");
+  assert.equal(content.includes("—"), false);
+});
+
+test("given the themed illustrations, when SVG markup is inspected, then colours remain in CSS", async () => {
+  const content = await read("index.html");
+  assert.equal(/<(?:path|circle|rect|ellipse)[^>]+(?:fill|stroke)=["'][^"']+["']/i.test(content), false);
+});
+
+test("given the story sections, when inspected, then scrolling and manual choices share accessible controls", async () => {
+  const page = await read("index.html");
+  const script = await read("assets/js/site.js");
+  assert.match(page, /data-scroll-chapter="life"/);
+  assert.match(page, /data-scroll-chapter="reserve"/);
+  assert.equal((page.match(/data-life-choice=/g) || []).length, 4);
+  assert.equal((page.match(/data-reserve-choice=/g) || []).length, 2);
+  assert.equal((page.match(/data-audience-choice=/g) || []).length, 3);
+  assert.match(script, /requestAnimationFrame/);
+  assert.match(script, /data-life-choice/);
+  assert.match(script, /data-reserve-choice/);
+});
+
+test("given app imagery is not ready, when the landing page is inspected, then three labelled slots remain", async () => {
+  const content = await read("index.html");
+  assert.equal((content.match(/data-screenshot-slot=/g) || []).length, 3);
+  ["household", "goals", "decisions"].forEach((slot) => {
+    assert.match(content, new RegExp(`data-screenshot-slot=["']${slot}["']`));
+  });
+});
