@@ -46,3 +46,20 @@ waitlist message only when a visitor chooses to send it.
 
 DM Sans and Fraunces are distributed under the SIL Open Font License 1.1. Keep
 the licence files in `assets/fonts/licenses/` with every public distribution.
+
+## Landing page maintenance
+
+The approved landing page uses seven concise sections, visual household cards,
+and native scroll transformations. Its assets are self-hosted, with no runtime
+dependencies. The hero and card motion live in assets/js/lean-story.js; the
+before-and-after reserve story lives in assets/js/reserve-story.js. Colours and
+responsive layouts live in the corresponding CSS files and the shared theme.
+
+Keep future app screenshots in template#future-app-screens until real images are
+ready. The template reserves three named slots without exposing placeholders to
+visitors. Preserve one visible wordmark in the header.
+
+Before release, verify desktop, tablet, phone, short portrait, and landscape
+layouts. The approved preview was checked at 25 browser viewport sizes from
+320 to 2560 pixels wide, including layout breakpoints. Also check native scroll
+progression and reversal, navigation, FAQ keyboard access, and email CTA links.

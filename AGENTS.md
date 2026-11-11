@@ -53,3 +53,26 @@ node scripts/build.mjs --url "http://localhost:4173"
 
 The generated `dist/` directory is ignored. The GitHub Pages workflow builds it
 during deployment.
+
+## Approved landing experience
+
+- The approved landing page is the seven-section editorial design: hero, Why Riti,
+  life changes, households, breathing room, FAQ, and waitlist.
+- Prefer concise visual cards. Keep one visible wordmark in the header and a
+  plain text name in the footer. Do not add decorative logos or repeat sections.
+- Keep the warm cream and green theme, with all illustration colours in CSS.
+- Hero, card, and reserve artwork responds to native scrolling. Visitors must
+  not need to click controls to discover the story; respect reduced motion.
+- Keep the unexpected expense visible during the reserve transformation. Riti
+  clarifies the picture; it does not make the expense disappear.
+- Preserve three future app-image slots inside template#future-app-screens until
+  real screenshots are supplied. Do not render empty frames or placeholder copy.
+- Keep visitor copy free of em dashes, technical implementation notes, and
+  unverified product claims.
+- The landing page loads experience.css, hero-story.css, reserve-story.css, and
+  lean-story.css, plus lean-story.js and reserve-story.js. Supporting legal pages
+  retain styles.css and the small shared site.js module.
+- Review changed layouts on desktop, tablet, phone, and short landscape screens.
+  Check artwork bounds, text wrapping, keyboard navigation, scroll reversals,
+  email link destinations, and horizontal overflow. Report viewport tests as
+  viewport tests, not physical-device or cross-browser testing.

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
@@ -9,97 +9,134 @@ async function read(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
-test("given the public source, when inspected, then builder preview code is absent", async () => {
+async function activeScripts() {
   const content = (await Promise.all(pages.map(read))).join("\n");
-  const prohibited = [
-    "emergent-overlay",
-    "visual-edit-overlay",
-    "posthog",
-    "session_recording",
-    "x-file-name",
-    "sourceMappingURL=data:",
-    "cdn.tailwindcss.com",
-  ];
+  const paths = [...new Set([...content.matchAll(/<script\b[^>]*src="([^"]+)"/g)].map((match) => match[1]))];
+  return Promise.all(paths.map(read));
+}
+
+test("public pages contain no builder overlays or third-party trackers", async () => {
+  const content = (await Promise.all(pages.map(read))).join("\n");
+  const prohibited = ["emergent-overlay", "visual-edit-overlay", "posthog", "session_recording", "x-file-name", "sourceMappingURL=data:", "cdn.tailwindcss.com"];
   prohibited.forEach((token) => assert.equal(content.includes(token), false, token));
 });
 
-test("given the landing page, when read without JavaScript, then navigation and legal links remain real links", async () => {
+test("navigation and legal destinations remain real links without JavaScript", async () => {
   const content = await read("index.html");
-  ["privacy.html", "terms.html", "contact.html"].forEach((target) => {
-    assert.match(content, new RegExp(`href=["']${target.replace("#", "\\#")}["']`));
-  });
+  for (const target of ["privacy.html", "terms.html", "contact.html"]) {
+    assert.ok(content.includes(`href="${target}"`), target);
+  }
+  const ids = new Set([...content.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
+  for (const [, fragment] of content.matchAll(/href="#([^"]+)"/g)) {
+    assert.ok(ids.has(fragment), `Missing navigation destination: ${fragment}`);
+  }
 });
 
-test("given the mobile menu, when enhanced, then its accessibility relationship is declared", async () => {
+test("the mobile menu declares its accessibility relationship", async () => {
   const content = await read("index.html");
   assert.match(content, /aria-expanded="false"/);
   assert.match(content, /aria-controls="primary-menu"/);
   assert.match(content, /id="primary-menu"/);
 });
 
-test("given a visitor joins the waitlist, when they follow any CTA, then it opens the approved email draft", async () => {
+test("every waitlist CTA opens the approved email draft", async () => {
+  for (const page of pages) {
+    const content = await read(page);
+    const links = [...content.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)]
+      .filter((match) => /join[^<]*waitlist/i.test(match[2]) || /data-waitlist-email/.test(match[0]));
+    assert.ok(links.length > 0, `${page} needs a waitlist link`);
+    for (const [, href] of links) {
+      const url = new URL(href.replaceAll("&amp;", "&"));
+      assert.equal(url.protocol, "mailto:", page);
+      assert.equal(url.pathname, "level8infection@gmail.com", page);
+      assert.equal(url.searchParams.get("subject"), "Join the Riti beta waitlist", page);
+      assert.match(url.searchParams.get("body"), /Please add me to the beta waitlist/, page);
+    }
+    assert.doesNotMatch(content, /data-waitlist-form|type="email"/, page);
+  }
+});
+
+test("active browser scripts contain no waitlist service or submission code", async () => {
+  for (const content of await activeScripts()) {
+    assert.doesNotMatch(content, /\bfetch\s*\(|XMLHttpRequest|sendBeacon|waitlistEndpoint|contactEmail/);
+  }
+});
+
+test("brand assets use the approved dark icon and the landing page has one wordmark", async () => {
   const content = (await Promise.all(pages.map(read))).join("\n");
-  const links = content.match(/href="mailto:level8infection@gmail\.com\?subject=[^"]+"/g) || [];
-  assert.equal(links.length, 6);
-  links.forEach((link) => {
-    assert.match(link, /subject=Join%20the%20Riti%20beta%20waitlist/);
-    assert.match(link, /Please%20add%20me%20to%20the%20beta%20waitlist/);
-  });
-  assert.equal(content.includes("data-waitlist-form"), false);
-  assert.equal(content.includes('type="email"'), false);
+  assert.doesNotMatch(content, /riti-icon-light|favicon\.png/);
+  assert.ok((await stat(new URL("assets/images/riti-icon-dark.png", root))).isFile());
+  const landing = await read("index.html");
+  assert.equal((landing.match(/<img\b[^>]*riti-wordmark\.png/g) || []).length, 1);
+  assert.match(landing, /<link rel="icon" href="assets\/images\/icon-192\.png"/);
 });
 
-test("given the static site, when inspected, then no waitlist service or browser submission code remains", async () => {
-  const content = await read("assets/js/site.js");
-  assert.equal(content.includes("fetch("), false);
-  assert.equal(content.includes("waitlistEndpoint"), false);
-  assert.equal(content.includes("contactEmail"), false);
-});
-
-test("given the brand assets, when inspected, then only the dark Riti app icon is used", async () => {
-  const content = (await Promise.all(pages.map(read))).join("\n");
-  assert.match(content, /assets\/images\/riti-icon-dark\.png/);
-  assert.equal(content.includes("riti-icon-light"), false);
-  assert.equal(content.includes("favicon.png"), false);
-});
-
-test("given every page, when inspected, then metadata and a single main landmark exist", async () => {
+test("every page has metadata and one main landmark", async () => {
   for (const page of pages) {
     const content = await read(page);
     assert.match(content, /<title>.+<\/title>/s, page);
     assert.match(content, /<meta\s+name="description"/s, page);
     assert.equal((content.match(/<main[ >]/g) || []).length, 1, page);
-    assert.match(content, /<link rel="canonical"/s, page);
+    assert.match(content, /<link rel="canonical"[^>]*__SITE_URL__/, page);
   }
 });
 
-test("given the approved voice, when the landing page is inspected, then it avoids em dashes", async () => {
+test("the approved landing copy has no em dashes or visitor-facing placeholders", async () => {
   const content = await read("index.html");
-  assert.equal(content.includes("—"), false);
+  assert.doesNotMatch(content, /—/);
+  const visibleMarkup = content.replace(/<template\b[\s\S]*?<\/template>/g, "");
+  assert.doesNotMatch(visibleMarkup, /screenshot placeholder|reserved for real|illustrative product concept|codex-preview/i);
 });
 
-test("given the themed illustrations, when SVG markup is inspected, then colours remain in CSS", async () => {
+test("illustration colours remain in CSS", async () => {
   const content = await read("index.html");
-  assert.equal(/<(?:path|circle|rect|ellipse)[^>]+(?:fill|stroke)=["'][^"']+["']/i.test(content), false);
+  assert.doesNotMatch(content, /<(?:path|circle|rect|ellipse)[^>]+(?:fill|stroke)=["'][^"']+["']/i);
 });
 
-test("given the story sections, when inspected, then scrolling and manual choices share accessible controls", async () => {
+test("scroll stories have readable content and reduced-motion fallbacks without choice buttons", async () => {
   const page = await read("index.html");
-  const script = await read("assets/js/site.js");
-  assert.match(page, /data-scroll-chapter="life"/);
-  assert.match(page, /data-scroll-chapter="reserve"/);
-  assert.equal((page.match(/data-life-choice=/g) || []).length, 4);
-  assert.equal((page.match(/data-reserve-choice=/g) || []).length, 2);
-  assert.equal((page.match(/data-audience-choice=/g) || []).length, 3);
-  assert.match(script, /requestAnimationFrame/);
-  assert.match(script, /data-life-choice/);
-  assert.match(script, /data-reserve-choice/);
+  assert.match(page, /When work changes\./);
+  assert.match(page, /When life asks for more\./);
+  assert.match(page, /Without a shared view/);
+  assert.match(page, /See what’s available\./);
+  assert.doesNotMatch(page, /data-life-choice|data-reserve-choice|data-audience-choice/);
+  for (const name of ["lean-story", "reserve-story"]) {
+    const script = await read(`assets/js/${name}.js`);
+    const css = await read(`assets/css/${name}.css`);
+    assert.match(script, /requestAnimationFrame/, name);
+    assert.match(script, /prefers-reduced-motion/, name);
+    assert.match(css, /prefers-reduced-motion/, name);
+  }
 });
 
-test("given app imagery is not ready, when the landing page is inspected, then three labelled slots remain", async () => {
+test("future app screenshot slots are retained in a non-rendered template", async () => {
   const content = await read("index.html");
-  assert.equal((content.match(/data-screenshot-slot=/g) || []).length, 3);
-  ["household", "goals", "decisions"].forEach((slot) => {
-    assert.match(content, new RegExp(`data-screenshot-slot=["']${slot}["']`));
-  });
+  const template = content.match(/<template id="future-app-screens">([\s\S]*?)<\/template>/)?.[1];
+  assert.ok(template);
+  assert.equal((template.match(/data-screenshot-slot=/g) || []).length, 3);
+  for (const slot of ["household", "goals", "decisions"]) {
+    assert.ok(template.includes(`data-screenshot-slot="${slot}"`), slot);
+  }
+  assert.doesNotMatch(content.replace(/<template\b[\s\S]*?<\/template>/g, ""), /data-screenshot-slot/);
+});
+
+test("every page asset and stylesheet font resolves inside the static site", async () => {
+  const stylesheetPaths = new Set();
+  for (const page of pages) {
+    const content = await read(page);
+    for (const [, path] of content.matchAll(/(?:src|href)="(assets\/[^"?#]+)"/g)) {
+      assert.ok((await stat(new URL(path, root))).isFile(), `${page}: ${path}`);
+      if (path.endsWith(".css")) stylesheetPaths.add(path);
+    }
+  }
+  for (const path of stylesheetPaths) {
+    const css = await read(path);
+    for (const [, resource] of css.matchAll(/url\(["']?([^"')]+)["']?\)/g)) {
+      assert.doesNotMatch(resource, /^(?:https?:|\/\/)/, `${path} loads a third-party resource`);
+      if (resource.startsWith("data:")) continue;
+      const target = new URL(resource, new URL(path, root));
+      assert.ok(target.href.startsWith(root.href), `${path}: asset escapes the site`);
+      assert.ok((await stat(target)).isFile(), `${path}: ${resource}`);
+    }
+  }
 });
