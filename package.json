@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/site.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "build:policies": "node scripts/build-policies.mjs",
+    "preview:policies": "node scripts/preview-policies.mjs"
   }
 }

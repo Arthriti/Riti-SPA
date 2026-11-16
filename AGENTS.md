@@ -76,3 +76,17 @@ during deployment.
   Check artwork bounds, text wrapping, keyboard navigation, scroll reversals,
   email link destinations, and horizontal overflow. Report viewport tests as
   viewport tests, not physical-device or cross-browser testing.
+
+## Mobile policy source pages
+
+- Follow POLICY_PAGES.md for source replacements and local review.
+- Markdown in content/mobile-policies/ owns policy content and metadata. Do not
+  edit generated HTML or rewrite legal meaning while changing its presentation.
+- Use npm run build:policies or npm run preview:policies for the six candidates.
+  The output .policy-preview/ is ignored and excluded from production builds.
+- Keep the website/waitlist privacy notice separate from the mobile policies.
+- Never publish candidates or activate app policy requirements without explicit
+  release authorization and the handoff clearance. No publication is authorized
+  merely because a source file says it is ready.
+- After activation, preserve accepted versioned HTML bytes, including the wrapper.
+  New material versions need new URLs and both translations.
