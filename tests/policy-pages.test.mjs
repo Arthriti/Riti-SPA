@@ -20,6 +20,7 @@ test('all six sources render their complete policy body without metadata or scri
     assert.equal(article,expected,doc.filename);
     assert.ok(html.includes('https://nowriti.app/privacy.html'));
     assert.ok(html.includes('noindex,nofollow'));
+    assert.doesNotMatch(html,/review-note|Review copy|Not published|समीक्षा प्रति|प्रकाशित नहीं/);
   }
 });
 test('translations point to the matching version and bilingual instructions work without scripts',async()=>{
@@ -44,7 +45,7 @@ test('unsafe routes, active markup, unsupported Markdown and unsafe links fail v
   assert.throws(()=>inline('[unsafe](javascript:alert)'));
   assert.equal(inline('<privacy@nowriti.app>'),'<a href="mailto:privacy@nowriti.app">privacy@nowriti.app</a>');
 });
-test('replacing one draft updates only its rendered document and deterministic hashes',async()=>{
+test('replacing one source updates only its document and current alias',async()=>{
   const fixture=await mkdtemp(resolve(tmpdir(),'riti-policies-'));
   try{
     await cp(sourceDir,resolve(fixture,'content/mobile-policies'),{recursive:true});
@@ -52,7 +53,7 @@ test('replacing one draft updates only its rendered document and deterministic h
     const first=await buildPolicyPreview(fixture),second=await buildPolicyPreview(fixture);
     assert.deepEqual(first,second);
     const file=resolve(fixture,'content/mobile-policies/privacy_policy_v1.md');
-    await writeFile(file,(await readFile(file,'utf8')).replace('publication_status: blocked-see-SITE_HANDOFF','publication_status: ready-for-review').replace('effective_date: not-yet-published','effective_date: 2026-12-01').replace('The effective publication date will appear here when this\nversion is released.','Effective 1 December 2026.'));
+    await writeFile(file,(await readFile(file,'utf8')).replaceAll('2026-11-17','2026-12-01').replaceAll('17 November 2026','1 December 2026'));
     const changed=await buildPolicyPreview(fixture);
     for(const entry of changed.documents){
       const old=first.documents.find(d=>d.path===entry.path);
@@ -60,10 +61,32 @@ test('replacing one draft updates only its rendered document and deterministic h
       assert.equal(entry.previewHtmlSha256,digest(await readFile(resolve(fixture,'.policy-preview','.'+entry.path))));
     }
     const html=await readFile(resolve(fixture,'.policy-preview/docs/privacy_policy_v1.html'),'utf8');
-    assert.ok(html.includes('2026-12-01'));assert.ok(html.includes('Review copy · Not published'));
+    assert.ok(html.includes('2026-12-01'));assert.doesNotMatch(html,/Review copy|review-note/);
+    assert.equal(changed.aliases.length,4);
+    for(const alias of changed.aliases){
+      const target=await readFile(resolve(fixture,'.policy-preview','.'+alias.target));
+      assert.deepEqual(await readFile(resolve(fixture,'.policy-preview','.'+alias.path)),target);
+      assert.equal(alias.previewHtmlSha256,digest(target));
+      const old=first.aliases.find(a=>a.path===alias.path);
+      assert.equal(alias.previewHtmlSha256!==old.previewHtmlSha256,alias.target==='/docs/privacy_policy_v1.html');
+    }
   }finally{if(!fixture.startsWith(resolve(tmpdir(),'riti-policies-')))throw Error('Unsafe fixture cleanup');await rm(fixture,{recursive:true,force:true});}
 });
-test('normal website build excludes mobile policy candidates',async()=>{
-  const build=await readFile(resolve(root,'scripts/build.mjs'),'utf8');
-  assert.doesNotMatch(build,/mobile-policies|policy-preview|buildPolicyPreview|build-policies/);
+test('production copies frozen approved bytes and aliases, never preview output',async()=>{
+  const {copyPolicyRelease}=await import('../scripts/copy-policy-release.mjs');
+  const fixture=await mkdtemp(resolve(tmpdir(),'riti-release-'));
+  try{
+    await cp(resolve(root,'policy-release'),resolve(fixture,'policy-release'),{recursive:true});
+    const out=resolve(fixture,'dist'); await copyPolicyRelease(fixture,out);
+    const manifest=JSON.parse(await readFile(resolve(fixture,'policy-release/manifest.json'),'utf8'));
+    assert.equal(manifest.documents.length,6); assert.equal(manifest.aliases.length,4);
+    for(const doc of manifest.documents){
+      const body=await readFile(resolve(out,'.'+doc.path));
+      assert.equal(digest(body),doc.sha256);assert.doesNotMatch(body.toString(),/noindex|review-note|@gmail\.com/);
+    }
+    for(const alias of manifest.aliases)assert.deepEqual(await readFile(resolve(out,'.'+alias.path)),await readFile(resolve(out,'.'+alias.target)));
+    await writeFile(resolve(fixture,'policy-release/docs/privacy_policy_v1.html'),'tampered');
+    await assert.rejects(copyPolicyRelease(fixture,out),/Frozen policy changed/);
+    assert.doesNotMatch(await readFile(resolve(root,'scripts/build.mjs'),'utf8'),/policy-preview|buildPolicyPreview/);
+  }finally{await rm(fixture,{recursive:true,force:true});}
 });

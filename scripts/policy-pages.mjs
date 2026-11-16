@@ -16,7 +16,7 @@ export function parseSource(source, filename) {
     if (!field || Object.hasOwn(metadata, field[1])) throw new Error(`${filename}: invalid or duplicate metadata`);
     metadata[field[1]] = field[2].replace(/^(['"])(.*)\1$/, '$2');
   }
-  if (!metadata.page_title || !metadata.publication_status) throw new Error(`${filename}: title and publication_status are required`);
+  if (!metadata.page_title) throw new Error(`${filename}: page_title is required`);
   if (!/^\/(?:docs\/[a-z0-9_]+|support|delete-account)\.html$/.test(metadata.canonical_path)) throw new Error(`${filename}: unsupported canonical_path`);
   const legal = metadata.canonical_path.startsWith('/docs/');
   if (legal && (!/^(privacy|terms)-v[1-9]\d*$/.test(metadata.version) || !['en','hi'].includes(metadata.language) || !metadata.effective_date)) throw new Error(`${filename}: policy version, language and effective_date are required`);
@@ -119,7 +119,6 @@ export function renderPage(doc, documents, css) {
   return `<!doctype html>
 <html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="description" content="${escape(m.page_title)}"><title>${escape(m.page_title)} | Riti</title><style>${css}</style></head>
 <body><a class="skip" href="#document">${hi?'दस्तावेज़ पर जाएँ':'Skip to document'}</a>
-<div class="review-note">${hi?'समीक्षा प्रति · प्रकाशित नहीं':'Review copy · Not published'}</div>
 <header class="site-header"><a class="wordmark" href="https://nowriti.app/" aria-label="Riti home">Riti<span>.</span></a><nav class="language" aria-label="${hi?'भाषा':'Language'}">${languageNav}</nav></header>
 <main id="document" tabindex="-1"><div class="document-heading"><p class="eyebrow">${hi?'Riti मोबाइल ऐप':'Riti mobile app'}</p><h1>${title}</h1>${metadata}</div>
 <div class="document-layout ${toc?'':'without-toc'}">${toc}<article aria-label="${escape(m.page_title)}">${body}</article></div></main>
@@ -141,12 +140,21 @@ export async function buildPolicyPreview(root) {
   if (dirname(output) !== resolve(root) || output === resolve(root)) throw new Error('Unsafe preview output');
   await rm(output,{recursive:true,force:true});
   await mkdir(output,{recursive:true});
-  const manifest = {status:'local-review-only', publicationAllowed:false, documents:[]};
+  const manifest = {status:'local-review-only', publicationAllowed:false, documents:[], aliases:[]};
   for (const {doc,html} of rendered) {
     const path = resolve(output,'.'+doc.metadata.canonical_path);
     await mkdir(dirname(path),{recursive:true});
     await writeFile(path,html,'utf8');
     manifest.documents.push({source:doc.filename,path:doc.metadata.canonical_path,version:doc.metadata.version||null,language:doc.metadata.language||'en-hi',effectiveDate:doc.metadata.effective_date||null,sourceSha256:doc.sourceSha256,previewHtmlSha256:digest(html)});
+  }
+  // Current aliases are exact copies, with no redirects or changes to versioned bytes.
+  const current = new Map();
+  for (const entry of rendered.filter(item=>item.doc.legal).sort((a,b)=>Number(a.doc.metadata.version.split('-v')[1])-Number(b.doc.metadata.version.split('-v')[1]))) {
+    current.set(entry.doc.metadata.canonical_path.replace(/_v\d+/, ''), entry);
+  }
+  for (const [path,{doc,html}] of current) {
+    await writeFile(resolve(output,'.'+path),html,'utf8');
+    manifest.aliases.push({path,target:doc.metadata.canonical_path,previewHtmlSha256:digest(html)});
   }
   await writeFile(resolve(output,'preview-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
   return manifest;

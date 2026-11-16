@@ -2,17 +2,13 @@
 page_title: Riti Mobile Privacy Policy
 version: privacy-v1
 language: en
-wording_status: pending-W1-W2-W3-see-SITE_HANDOFF
-publication_status: not-published
-release_status: tracked-separately-in-SITE_HANDOFF
-effective_date: not-yet-published
+effective_date: 2026-11-17
 canonical_path: /docs/privacy_policy_v1.html
 ---
 
 # Riti Mobile Privacy Policy
 
-Version: **privacy-v1**. The effective publication date will appear here when this
-version is released.
+Version: **privacy-v1**. Effective date: **17 November 2026**.
 
 Riti: Money & Goals is a mobile app for personal and household financial
 planning. This policy covers the app and related account and support services.
@@ -20,7 +16,7 @@ The first release is free, offered in India, and intended for account holders
 aged 18 or over. There is no payment or subscription module.
 
 Riti is operated by **Amritansh**, an individual using the Riti brand.
-Amritansh handles privacy questions, grievances and security reports at
+The privacy contact and Grievance Officer is **Amritansh**, available at
 [privacy@nowriti.app](mailto:privacy@nowriti.app). For app help, write to
 [support@nowriti.app](mailto:support@nowriti.app). You may write in English or
 Hindi; replies may be in English.
@@ -93,16 +89,14 @@ controls. Do not assume signing out or uninstalling erases separately saved file
 ## Providers and locations
 
 Supabase provides authentication, access management and encrypted sync delivery.
-The configured project's primary database, authentication service and stored
-objects are in Mumbai, India. Provider logs, edge execution, support and platform
-operations can involve other countries; this is not an India-only processing
-promise. Provider recovery copies are distinct from live application records.
+Resend handles support and privacy email. These providers may process account,
+service/security or email information outside India, including for hosting,
+support and recovery copies. This is not a promise that all information remains
+in India. Provider recovery copies are distinct from live application records.
 
-Resend handles support/privacy email. The domain uses Tokyo routing; Resend
-states that email data is stored in the United States. Support emails are not
-protected by the app's household encryption. Please do not email passwords,
-sign-in codes, recovery keys, identity documents, bank statements or household
-backup files.
+Support emails are not protected by the app's household encryption. Please do
+not email passwords, sign-in codes, recovery keys, identity documents, bank
+statements or household backup files.
 
 Policy links open on nowriti.app, hosted on GitHub Pages, in your system browser.
 The app also fetches the required policy pages to check their availability and
@@ -132,7 +126,9 @@ saved files require separate consideration when handling a request.
 
 Encrypted sync payloads and transfer objects have temporary delivery and expiry
 lifecycles. Delivery/control records, authentication information, essential logs
-and provider recovery copies have different lifecycles; they do not all disappear
+and provider recovery copies have different lifecycles. Essential logs are used
+for service operation, security investigations and applicable legal retention;
+provider recovery copies follow the relevant recovery cycle. They do not all disappear
 when an encrypted payload expires. A deletion response will explain relevant
 information retained and its purpose rather than claim simultaneous erasure of
 every provider or user-controlled copy.
@@ -149,6 +145,17 @@ the restricted account reference, versions, actions and timestamps, not househol
 financial content. A specific legal obligation or documented hold may extend
 retention for the necessary records. Records are deleted when that requirement
 and the ordinary period have ended. Provider recovery copies may expire later.
+
+## Complaints
+
+Email [privacy@nowriti.app](mailto:privacy@nowriti.app) with a short description
+of your concern and the outcome you are requesting. Amritansh, Riti's operator
+and Grievance Officer, handles complaints. Include only information needed to
+understand the issue. We may request proportionate verification before acting
+on account-specific requests. We will respond by email with the outcome or
+necessary next steps, subject to applicable legal deadlines. You may follow up
+in the same email thread. This process does not limit access to statutory
+complaint routes or other legal remedies.
 
 ## Requests, correction and withdrawal
 

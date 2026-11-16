@@ -26,7 +26,7 @@ separate from the private mobile-app repository and is intended for GitHub Pages
 
 ## Waitlist and privacy
 
-- The primary action is a `mailto:` link to `level8infection@gmail.com` with a
+- The primary action is a `mailto:` link to `support@nowriti.app` with a
   prefilled beta-waitlist subject and body.
 - Do not claim that clicking the link joins the visitor automatically. Their
   email app opens, and they must choose to send the message.
@@ -84,9 +84,11 @@ during deployment.
   edit generated HTML or rewrite legal meaning while changing its presentation.
 - Use npm run build:policies or npm run preview:policies for the six candidates.
   The output .policy-preview/ is ignored and excluded from production builds.
+  Production copies only approved frozen policy-release/ HTML, verified against
+  its manifest; aliases are generated from those exact bytes.
 - Keep the website/waitlist privacy notice separate from the mobile policies.
 - Never publish candidates or activate app policy requirements without explicit
-  release authorization and the handoff clearance. No publication is authorized
+  release authorization. No publication is authorized
   merely because a source file says it is ready.
 - After activation, preserve accepted versioned HTML bytes, including the wrapper.
   New material versions need new URLs and both translations.

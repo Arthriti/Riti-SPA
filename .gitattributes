@@ -1,0 +1,2 @@
+# Preserve frozen policy response bytes on every checkout.
+policy-release/** -text

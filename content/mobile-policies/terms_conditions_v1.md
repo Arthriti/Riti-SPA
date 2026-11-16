@@ -2,17 +2,13 @@
 page_title: Riti Terms and Conditions
 version: terms-v1
 language: en
-wording_status: pending-W1-W3-W4-see-SITE_HANDOFF
-publication_status: not-published
-release_status: tracked-separately-in-SITE_HANDOFF
-effective_date: not-yet-published
+effective_date: 2026-11-17
 canonical_path: /docs/terms_conditions_v1.html
 ---
 
 # Riti Terms and Conditions
 
-Version: **terms-v1**. The effective publication date will appear here when this
-version is released.
+Version: **terms-v1**. Effective date: **17 November 2026**.
 
 ## Operator and scope
 
@@ -82,7 +78,10 @@ granted, and third-party open-source licences remain unaffected.
 
 For iPhone, [Apple's Standard EULA](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
 governs the app software licence. These Riti terms govern the account and service;
-they do not amend Apple's standard software licence or remove mandatory rights.
+they supplement the Standard EULA and do not amend it or remove mandatory rights.
+Where the Standard EULA also covers an in-app service, its applicable provisions
+remain in force; these terms do not replace its warranty or liability provisions.
+Its data-use language does not mean Riti enables optional analytics or crash uploads.
 Apple is not the operator of Riti's account service. Contact Riti about that
 service. Third-party materials remain subject to their applicable licences.
 

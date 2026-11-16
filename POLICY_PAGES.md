@@ -1,10 +1,11 @@
 # Mobile policy pages
 
-These are local publication candidates. No policy pages are included by the normal
-website build or GitHub Pages workflow. Nothing here activates app acceptance.
+The six documents are approved for publication on 17 November 2026. The normal
+website build copies frozen policy-release/ HTML and generates four aliases.
+It verifies manifest hashes before copying. Nothing here activates app acceptance.
 The website/waitlist notice at privacy.html remains separate.
 
-## Replace a draft
+## Replace a source document
 
 1. Replace the relevant Markdown file in content/mobile-policies/ with the newer
    document. Keep its front matter. The file supplies its title, language, version,
@@ -17,7 +18,9 @@ The website/waitlist notice at privacy.html remains separate.
 The server listens only at http://127.0.0.1:4186/. The root opens the bilingual
 support page. The six paths match the requested future public paths. Current
 policy alias links inside the sources are resolved to their corresponding version
-within this local preview. No public aliases are created yet.
+within this local preview. Four stable current aliases are also generated locally
+as exact copies of the highest numbered version for each policy and language.
+They return HTML directly, while language links retain the matching version.
 
 The source directory is discovered automatically; filenames are not hardcoded in
 the renderer. Each source must have a unique canonical_path. A policy's version
@@ -34,21 +37,27 @@ Unsupported blocks fail the build rather than silently discard policy text.
 Add and verify renderer support before adopting a new document format.
 
 Policy metadata: page_title, version (privacy-v1 or terms-v1), language (en or hi),
-publication_status, effective_date (YYYY-MM-DD or not-yet-published), canonical_path.
-Support/deletion metadata: page_title, publication_status, canonical_path.
-The build always marks local output as an unpublished review copy, even when a
-replacement source is ready. Internal publication_status values never render.
+optional publication_status, effective_date (YYYY-MM-DD or not-yet-published), canonical_path.
+Support/deletion metadata: page_title, canonical_path (publication_status optional).
+Public-facing pages have no draft or review labels. Local-only status lives in
+preview-manifest.json and the server configuration, not the document body.
+Internal publication_status values never render.
 Dates are never invented; the approved source must contain the actual date and
 replace its preparation sentence. Updating metadata does not rewrite legal prose.
 
-## Publication remains a separate step
+## Approved publication and future changes
 
-Resolve the handoff's blockers, approve the effective date and have English/Hindi
-meaning reviewed before authorizing publication. The current renderer deliberately
-has no publish option and the production build deliberately excludes these files.
+The 2026-11-17 publication handoff supplies final text and supersedes its older
+wording gates. Internal audit findings remain unresolved, not public draft labels.
+The current sources are copied unchanged from arth-os/apps/arth_os/build/
+policy-docs-publication/knowledge/product/launch/hosting/. Their effective date is
+17 November 2026. If first publication occurs later, align dates in the source
+metadata and prose across EN/HI without backdating. Review language meaning and
+obtain the user's release authorization before publication. The preview renderer has no publish option. Production uses the approved frozen
+policy-release/ files, never the replaceable source or preview output.
 
 At first publication, freeze the exact final HTML, including its inline layout,
-under the four versioned URLs. Add stable current aliases only after clearance.
+under the four versioned URLs. Include the prepared stable current aliases when publication is authorized.
 Do not rebuild previously published versions with a newer template or replace
 their source in place. A later material change adds a new version and both
 translations; the old accepted HTML stays available at its original URL.
@@ -62,3 +71,9 @@ identity to the app agent. Backend release activation remains a separate action.
 
 The layout uses no JavaScript, cookies, analytics or remote fonts. All colours
 are in scripts/policy-page.css, which is embedded deterministically in each page.
+
+The release manifest records expected artifact hashes. Live decoded response
+hashes and deployment identity must be verified separately for the app handoff.
+Never regenerate published versioned HTML just because source or CSS changes.
+New approved operational pages may replace support/deletion artifacts and hashes;
+material legal changes need new versioned documents.

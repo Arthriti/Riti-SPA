@@ -48,7 +48,7 @@ test("every waitlist CTA opens the approved email draft", async () => {
     for (const [, href] of links) {
       const url = new URL(href.replaceAll("&amp;", "&"));
       assert.equal(url.protocol, "mailto:", page);
-      assert.equal(url.pathname, "level8infection@gmail.com", page);
+      assert.equal(url.pathname, "support@nowriti.app", page);
       assert.equal(url.searchParams.get("subject"), "Join the Riti beta waitlist", page);
       assert.match(url.searchParams.get("body"), /Please add me to the beta waitlist/, page);
     }
@@ -140,3 +140,9 @@ test("every page asset and stylesheet font resolves inside the static site", asy
     }
   }
 });
+
+ test('contact routes use only approved domain mailboxes',async()=>{
+ for(const page of pages){const html=await read(page);for(const [,address] of html.matchAll(/mailto:([^?"\s]+)/g))assert.ok(['support@nowriti.app','privacy@nowriti.app'].includes(address),page);}
+ assert.match(await read('privacy.html'),/href="mailto:privacy@nowriti.app"/);
+ assert.match(await read('contact.html'),/href="mailto:privacy@nowriti.app"/);
+ });

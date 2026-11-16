@@ -1,0 +1,71 @@
+{
+  "effectiveDate": "2026-11-17",
+  "documents": [
+    {
+      "path": "/delete-account.html",
+      "source": "delete-account.md",
+      "version": null,
+      "language": "en-hi",
+      "effectiveDate": null,
+      "sha256": "625c9305c0df25f48e55fc96118a28fd535c80b2603403305ff81f523fc11180"
+    },
+    {
+      "path": "/docs/privacy_policy_v1.html",
+      "source": "privacy_policy_v1.md",
+      "version": "privacy-v1",
+      "language": "en",
+      "effectiveDate": "2026-11-17",
+      "sha256": "2172384fd75bab31a9c9aa0506f5d917596cf09e2c46f3cad7051a80e9456bf2"
+    },
+    {
+      "path": "/docs/privacy_policy_v1_hi.html",
+      "source": "privacy_policy_v1_hi.md",
+      "version": "privacy-v1",
+      "language": "hi",
+      "effectiveDate": "2026-11-17",
+      "sha256": "962ef10bde1aab71c32ce9171199fc88177c95c5972c25d341439a8632d134cd"
+    },
+    {
+      "path": "/support.html",
+      "source": "support.md",
+      "version": null,
+      "language": "en-hi",
+      "effectiveDate": null,
+      "sha256": "839c74897d9ed4d3ef1fb22200b5c51af536d40490472b3237673d3c5467afd0"
+    },
+    {
+      "path": "/docs/terms_conditions_v1.html",
+      "source": "terms_conditions_v1.md",
+      "version": "terms-v1",
+      "language": "en",
+      "effectiveDate": "2026-11-17",
+      "sha256": "a73c537f984da916e396969ef3d339ca464d73e30215c5ae2aaea03414e357b4"
+    },
+    {
+      "path": "/docs/terms_conditions_v1_hi.html",
+      "source": "terms_conditions_v1_hi.md",
+      "version": "terms-v1",
+      "language": "hi",
+      "effectiveDate": "2026-11-17",
+      "sha256": "9dd5f134b1fc7d0e47f845910a208d7972e8bcdfcecbfce09457dc7dcc0e8d53"
+    }
+  ],
+  "aliases": [
+    {
+      "path": "/docs/privacy_policy.html",
+      "target": "/docs/privacy_policy_v1.html"
+    },
+    {
+      "path": "/docs/privacy_policy_hi.html",
+      "target": "/docs/privacy_policy_v1_hi.html"
+    },
+    {
+      "path": "/docs/terms_conditions.html",
+      "target": "/docs/terms_conditions_v1.html"
+    },
+    {
+      "path": "/docs/terms_conditions_hi.html",
+      "target": "/docs/terms_conditions_v1_hi.html"
+    }
+  ]
+}

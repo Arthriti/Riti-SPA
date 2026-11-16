@@ -1,8 +1,5 @@
 ---
 page_title: Delete your Riti account
-wording_status: pending-W2-W3-see-SITE_HANDOFF
-publication_status: not-published
-release_status: tracked-separately-in-SITE_HANDOFF
 canonical_path: /delete-account.html
 ---
 

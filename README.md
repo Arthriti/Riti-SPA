@@ -6,7 +6,7 @@ for GitHub Pages and intentionally kept separate from the mobile application.
 ## Waitlist and contact
 
 Waitlist calls to action open a pre-addressed email draft to
-`level8infection@gmail.com`. The website does not collect, store, or transmit a
+`support@nowriti.app`. The website does not collect, store, or transmit a
 visitor's email address itself. A visitor joins only after they send the draft
 from their own email app.
 
