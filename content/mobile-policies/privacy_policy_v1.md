@@ -49,8 +49,7 @@ Hindi; replies may be in English.
   choose to send and our replies, used to respond and handle requests.
 - **Essential service/security information:** providers may process IP addresses,
   request timestamps, authentication events and technical operation results to
-  operate and protect their services. The first release does not enable optional
-  app analytics or automatic crash-report uploads.
+  operate and protect their services. Optional app usage analytics are off.
 
 Information comes from you, members of your household, your chosen sign-in
 provider and service activity. An entry about someone does not establish that
@@ -86,6 +85,20 @@ records become household records and follow the same sharing and sync rules.
 Copies you save or provide to other services are also subject to the destination's
 controls. Do not assume signing out or uninstalling erases separately saved files.
 
+**Automatic error reports.** If Riti crashes, or if
+opening the app, accessing its encrypted storage, working offline or starting
+a sync fails in certain ways, the app automatically sends a report to Sentry
+so we can diagnose and fix the problem. Reporting stays on while you use Riti. There is no in-app switch to turn it off.
+
+A report describes where the failure happened in the code. It includes the
+app version and build, release environment, operating system, type of failure
+and a short name for the operation. When the same attempt reaches our server,
+a short-lived reference may help us match the two reports. We configure
+reporting to exclude names, email addresses, persistent user or device IDs,
+household and financial records, form entries, screenshots, credentials and
+network request contents or full URLs. We use reports to fix errors. We do
+not record sessions, track product usage or profile performance through Sentry.
+
 ## Providers and locations
 
 Supabase provides authentication, access management and encrypted sync delivery.
@@ -105,6 +118,16 @@ metadata, such as an IP address, to the host. They do not send household records
 or account identifiers in the document URL. The website and any waitlist have a
 separate privacy notice.
 
+Sentry processes error reports for Riti. We selected the European Union for
+event storage. Sentry and its service providers may process information in
+other countries. The connection exposes a network IP address to Sentry. We
+require Sentry to scrub incoming events and prevent IP storage in new events.
+Generative AI and the use of identifying event data for Sentry's product
+improvement are off. Sentry may use non-identifying elements to improve its
+service. For high-priority issues, Riti's operator can receive an email with
+the issue title, project, event reference, time and a link to Sentry. Enhanced
+Privacy limits the details included in the email.
+
 ## Advertising and other disclosure
 
 The first release has no advertising. We do not sell personal data or use
@@ -118,6 +141,15 @@ legal claims. Disclosure is limited to the relevant purpose. It does not give
 us the ability to decrypt household content we cannot otherwise read.
 
 ## Retention and deletion
+
+Sentry keeps individual error events for 30 days on the Developer plan. Events
+received during the initial trial normally stay for 90 days. Each event keeps
+the period that applied when it arrived. Riti can erase events early by deleting
+the issue they belong to, which removes all events grouped under it. Sentry
+cannot edit or delete a single event within that group. Issue counts may
+last longer. Sentry expires production backups 30 or 90 days after creating
+them, depending on the data type. Alert emails are separate copies in the
+operator's mailbox.
 
 Household records on phones remain available for household use until the
 app's applicable removal/cleanup action or the user removes their local copy.
