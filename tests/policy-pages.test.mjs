@@ -8,8 +8,8 @@ const root=resolve(import.meta.dirname,'..');
 const sourceDir=resolve(root,'content/mobile-policies');
 async function documents(){return Promise.all((await readdir(sourceDir)).filter(f=>f.endsWith('.md')).sort().map(async f=>parseSource(await readFile(resolve(sourceDir,f),'utf8'),f)));}
 const decode=text=>text.replace(/<[^>]*>/g,'').replaceAll('&amp;','&').replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&quot;','"').replaceAll('&#39;',"'").replace(/\s+/g,' ').trim();
-test('all six sources render their complete policy body without metadata or script leakage',async()=>{
-  const docs=await documents(); assert.equal(docs.length,6);
+test('all eight sources render their complete policy body without metadata or script leakage',async()=>{
+  const docs=await documents(); assert.equal(docs.length,8);
   const css=await readFile(resolve(root,'scripts/policy-page.css'),'utf8');
   for(const doc of docs){
     const html=renderPage(doc,docs,css);
@@ -79,7 +79,7 @@ test('production copies frozen approved bytes and aliases, never preview output'
     await cp(resolve(root,'policy-release'),resolve(fixture,'policy-release'),{recursive:true});
     const out=resolve(fixture,'dist'); await copyPolicyRelease(fixture,out);
     const manifest=JSON.parse(await readFile(resolve(fixture,'policy-release/manifest.json'),'utf8'));
-    assert.equal(manifest.documents.length,6); assert.equal(manifest.aliases.length,4);
+    assert.equal(manifest.documents.length,8); assert.equal(manifest.aliases.length,4);
     for(const doc of manifest.documents){
       const body=await readFile(resolve(out,'.'+doc.path));
       assert.equal(digest(body),doc.sha256);assert.doesNotMatch(body.toString(),/noindex|review-note|@gmail\.com/);

@@ -48,6 +48,22 @@
       "language": "hi",
       "effectiveDate": "2026-11-17",
       "sha256": "9dd5f134b1fc7d0e47f845910a208d7972e8bcdfcecbfce09457dc7dcc0e8d53"
+    },
+    {
+      "path": "/docs/terms_conditions_v2.html",
+      "source": "terms_conditions_v2.md",
+      "version": "terms-v2",
+      "language": "en",
+      "effectiveDate": "2026-11-21",
+      "sha256": "66af8e9e439f40ab552ebee95138515169879bf5cfa0a30c17a9aefa0e04361e"
+    },
+    {
+      "path": "/docs/terms_conditions_v2_hi.html",
+      "source": "terms_conditions_v2_hi.md",
+      "version": "terms-v2",
+      "language": "hi",
+      "effectiveDate": "2026-11-21",
+      "sha256": "b8bd7fc34bb472562c80c4800e974fabf23ddaf32f58f8abb8c7c5b455e9d78b"
     }
   ],
   "aliases": [
@@ -61,11 +77,11 @@
     },
     {
       "path": "/docs/terms_conditions.html",
-      "target": "/docs/terms_conditions_v1.html"
+      "target": "/docs/terms_conditions_v2.html"
     },
     {
       "path": "/docs/terms_conditions_hi.html",
-      "target": "/docs/terms_conditions_v1_hi.html"
+      "target": "/docs/terms_conditions_v2_hi.html"
     }
   ]
 }
